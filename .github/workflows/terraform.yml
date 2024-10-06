@@ -1,6 +1,7 @@
-# This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
-# with an API token for Terraform Cloud (app.terraform.io). On pull request events, this workflow will run
-# `terraform init`, `terraform validate`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
+# This workflow runs the dummy ci tests on the application source code and if they succeed it runs terraform deployment job that
+# installs the latest version of Terraform CLI and configures the Terraform CLI with aws provider and s3 backend
+# On pull request events, this workflow will run `terraform init`, `terraform fmt`, `terraform validate`, and `terraform plan`
+# and shows the terraform plan in the pull request using github actions bot. On push events
 # to the "main" branch, `terraform apply` will be executed.
 #
 
@@ -17,8 +18,14 @@ on:
       - dev
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "CI passed"
   terraform:
     name: 'Terraform'
+    needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,7 +48,7 @@ jobs:
 
     - name: Terraform Lint
       run: cd infra && terraform fmt -check
-      
+
     - name: Terraform validate
       run:  cd infra && terraform validate
 
