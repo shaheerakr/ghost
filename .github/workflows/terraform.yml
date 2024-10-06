@@ -35,25 +35,13 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: 1.9.2
-    # setup terraform cache directory and use remote caching(s3)
-    
-    - name: Extract branch name
-      shell: bash
-      id: extract_branch
-      run: |
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          echo "BRANCH=${{ steps.branch-names.outputs.base_ref_branch }}" >> "$GITHUB_ENV"
-        else
-          echo "BRANCH=${{ steps.branch-names.outputs.current_branch }}" >> "$GITHUB_ENV"
-        fi
 
     - name: Terraform Init
       run: cd infra && terraform init
 
     - name: Terraform Lint
       run: cd infra && terraform fmt -check
-
-    # Checks that all Terraform configuration files adhere to a canonical format
+      
     - name: Terraform validate
       run:  cd infra && terraform validate
 

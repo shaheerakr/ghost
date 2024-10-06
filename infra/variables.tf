@@ -10,10 +10,10 @@ variable "vpc_cidr" {
 
 variable "container_image" {
   description = "Container image to be deployed on ECS"
-  default     = "ghost:latest" 
+  default     = "ghost:latest"
 }
 
 variable "container_port" {
   description = "Port on which the container is listening"
-  default     = 2368 
+  default     = 2368
 }
