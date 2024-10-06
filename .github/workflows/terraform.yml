@@ -44,7 +44,9 @@ jobs:
         terraform_version: 1.9.2
 
     - name: Terraform Init
-      run: cd infra && terraform init
+      run: |
+        echo ${github.ref} 
+        cd infra && terraform init
 
     - name: Terraform Lint
       run: cd infra && terraform fmt -check
