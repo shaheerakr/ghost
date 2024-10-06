@@ -1,6 +1,6 @@
 # This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
 # with an API token for Terraform Cloud (app.terraform.io). On pull request events, this workflow will run
-# `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
+# `terraform init`, `terraform validate`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
 # to the "main" branch, `terraform apply` will be executed.
 #
 
@@ -20,7 +20,6 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: production
     defaults:
       run:
         shell: bash
@@ -51,6 +50,9 @@ jobs:
     - name: Terraform Init
       run: cd infra && terraform init
 
+    - name: Terraform Lint
+      run: cd infra && terraform fmt -check
+
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform validate
       run:  cd infra && terraform validate
@@ -58,16 +60,16 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: cd infra && terraform plan -out=plan.out
-    - run: terraform show -no-color ./infra/plan.out > ./infra/plan.txt
-    - run: terraform show -json ./infra/plan.out > ./infra/plan.json
+    - run: cd infra && terraform show -no-color plan.out > plan.txt
+    - run: cd infra && terraform show -json plan.out > plan.json
     - uses: ahmadnassri/action-terraform-report@v3
       if: github.event_name == 'pull_request'
       with:
         # tell the action the plan outputs
-        terraform-text: ./infra/plan.txt
-        terraform-json: ./infra/plan.json
+        terraform-text: infra/plan.txt
+        terraform-json: infra/plan.json
         remove-stale-reports: true
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform apply -auto-approve ./infra/plan.out
+      run: cd infra && terraform apply -auto-approve plan.out
