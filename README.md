@@ -44,7 +44,7 @@ Modify the `terraform` block in `backend.tf` if necessary:
 
 ### Step 3: Setup environment variables for AWS
 
-Ensure that you have the environment variables configured for the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, you can generate these keys from AWS and store in your environment but you need to make sure they account that they keys belong to have AWS administrator privileges such that it can create and modify services in AWS such as ECS, ALB, VPC and others.
+Ensure that you have the environment variables configured for the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, you can generate these keys from AWS and store in your environment but make sure the account have AWS administrator privileges so that it can create and modify services in AWS such as ECS, ALB, VPC and others.
 You can also modify the `variables.tf` if you want to change the regions or any other settings.
 
 ### Step 4: Deploy the Infrastructure
